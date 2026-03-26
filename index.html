@@ -543,16 +543,10 @@
 
 <script>
   // ── CONFIG ──────────────────────────────────────────────────
-  const WEBHOOK_URL  = "https://discord.com/api/webhooks/1486769894400856085/gWSs0eT1rER1ZoTjXmgpd0GVqdMj4GbnDwxgrZgj05ZFa6rmkTTOtaYLsezKIeWLunD3";
-  const PING_USER_ID = "710992064464289893";
-
-  const PROMO_CODES = {
-    "FRIEND-DISCOUNT1": { discountPct: 80, label: "80% off" },
-    "ELISHA-SHAK1":     { discountPct: 100, label: "100% off" }
-  };
+  const WORKER_URL = "https://turnitintestgy.gt-triculture.workers.dev";
   // ────────────────────────────────────────────────────────────
 
-  let appliedPromo = null;
+  let appliedPromo = null; // { code, discountPct, label } — set by server response
 
   // File handling
   const fileDrop  = document.getElementById('fileDrop');
@@ -576,17 +570,32 @@
     document.getElementById('fileErr').classList.remove('visible');
   }
 
-  function applyPromo() {
-    const raw  = document.getElementById('promoInput').value.trim().toUpperCase();
-    const msg  = document.getElementById('promoMsg');
+  async function applyPromo() {
+    const raw = document.getElementById('promoInput').value.trim().toUpperCase();
+    const msg = document.getElementById('promoMsg');
     if (!raw) { msg.textContent = 'Enter a promo code first.'; msg.className = 'promo-msg bad'; return; }
-    if (PROMO_CODES[raw]) {
-      appliedPromo = { code: raw, ...PROMO_CODES[raw] };
-      msg.textContent = '✓ Code applied: ' + appliedPromo.label + ' — ' + appliedPromo.code;
-      msg.className = 'promo-msg ok';
-    } else {
-      appliedPromo = null;
-      msg.textContent = '✕ Invalid promo code.';
+
+    msg.textContent = 'Checking…';
+    msg.className = 'promo-msg ok';
+
+    try {
+      const res  = await fetch(WORKER_URL + '/validate-promo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: raw })
+      });
+      const data = await res.json();
+      if (data.valid) {
+        appliedPromo = { code: raw, discountPct: data.discountPct, label: data.label };
+        msg.textContent = '✓ Code applied: ' + appliedPromo.label + ' — ' + appliedPromo.code;
+        msg.className = 'promo-msg ok';
+      } else {
+        appliedPromo = null;
+        msg.textContent = '✕ Invalid promo code.';
+        msg.className = 'promo-msg bad';
+      }
+    } catch {
+      msg.textContent = '✕ Could not verify code. Try again.';
       msg.className = 'promo-msg bad';
     }
   }
@@ -699,62 +708,31 @@
     btn.classList.add('loading');
     btn.disabled = true;
 
-    const name  = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const file  = fileInput.files[0];
-    const svc   = getService();
-    const { final, discount, priorityAddon } = calcTotal(svc.price);
-    const promoUsed = appliedPromo ? appliedPromo.code : 'None';
-    const now = new Date().toLocaleString('en-GY', { timeZone: 'America/Guyana', dateStyle: 'full', timeStyle: 'short' });
-    const ping = PING_USER_ID !== "YOUR_DISCORD_USER_ID_HERE" ? '<@' + PING_USER_ID + '> ' : '';
+    const name     = document.getElementById('name').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    const file     = fileInput.files[0];
+    const svc      = getService();
+    const priority = document.getElementById('priorityCheck').checked;
 
     try {
       const fd = new FormData();
+      fd.append('name',         name);
+      fd.append('email',        email);
+      fd.append('serviceLabel', svc.label);
+      fd.append('servicePrice', svc.price);
+      fd.append('promoCode',    appliedPromo ? appliedPromo.code : '');
+      fd.append('priority',     priority ? 'true' : 'false');
+      fd.append('mmg',          mmg);
+      fd.append('file',         file, file.name);
 
-      const discountLine = discount > 0
-        ? appliedPromo.code + ' (−$' + discount + ' GYD, ' + appliedPromo.discountPct + '% off)'
-        : 'None';
+      const res  = await fetch(WORKER_URL + '/submit', { method: 'POST', body: fd });
+      const data = await res.json();
 
-      const payload = {
-        content: ping + '📬 **New Score Request!**',
-        embeds: [{
-          color: 0xF5C842,
-          title: '📋 Submission Details',
-          fields: [
-            { name: '👤 Full Name',           value: name,                                inline: true  },
-            { name: '📧 Email',               value: email,                               inline: true  },
-            { name: '\u200B',                  value: '\u200B',                            inline: false },
-            { name: '🛠️ Service',             value: svc.label,                           inline: true  },
-            { name: '💰 Base Price',          value: '$' + svc.price + ' GYD',            inline: true  },
-            { name: '\u200B',                  value: '\u200B',                            inline: false },
-            { name: '🎟️ Promo Code',         value: promoUsed,                           inline: true  },
-            { name: '🏷️ Discount',           value: discountLine,                        inline: true  },
-            { name: '\u200B',                  value: '\u200B',                            inline: false },
-            { name: '⚡ Max Priority',        value: priorityAddon > 0 ? 'Yes (+$1,000 GYD)' : 'No', inline: true },
-            { name: '\u200B',                  value: '\u200B',                            inline: false },
-            { name: '✅ Total Charged',       value: '**$' + final + ' GYD**',           inline: true  },
-            { name: '💳 MMG Reference #',     value: '`' + mmg + '`',                     inline: true  },
-            { name: '\u200B',                  value: '\u200B',                            inline: false },
-            { name: '📎 Document',            value: file.name,                           inline: true  },
-            { name: '📁 File Size',           value: (file.size / 1024).toFixed(1) + ' KB', inline: true },
-          ],
-          footer: { text: 'Submitted: ' + now + ' (GY Time)' },
-          timestamp: new Date().toISOString()
-        }]
-      };
+      if (!data.ok) throw new Error(data.error || 'Unknown error');
 
-      fd.append('payload_json', JSON.stringify(payload));
-      fd.append('files[0]', file, file.name);
-
-      const res = await fetch(WEBHOOK_URL, { method: 'POST', body: fd });
-      if (!res.ok) {
-        const txt = await res.text();
-        throw new Error('Discord ' + res.status + ': ' + txt);
-      }
-
-      document.querySelector('header').style.display   = 'none';
+      document.querySelector('header').style.display      = 'none';
       document.getElementById('paySection').style.display = 'none';
-      document.getElementById('confirmEmail').textContent = email;
+      document.getElementById('confirmEmail').textContent  = email;
       document.getElementById('successScreen').classList.add('visible');
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
