@@ -787,7 +787,7 @@
 
 <div class="toast" id="toast"></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // ── CONFIG ──────────────────────────────────────────────────
   const WORKER_URL = "https://turnitingy.gt-triculture.workers.dev";
   // ────────────────────────────────────────────────────────────
@@ -801,29 +801,29 @@
     return amount + (20 - remainder);
   }
 
-  // File handling
-  const fileDrop  = document.getElementById('fileDrop');
-  const fileInput = document.getElementById('fileInput');
+  // File handling — attach listeners once DOM is ready
+  window.addEventListener('load', function() {
+    const fileDrop  = document.getElementById('fileDrop');
+    const fileInput = document.getElementById('fileInput');
 
-  fileDrop.addEventListener('dragover', e => { e.preventDefault(); fileDrop.classList.add('dragover'); });
-  fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
-  fileDrop.addEventListener('drop', e => {
-    e.preventDefault();
-    fileDrop.classList.remove('dragover');
-    if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
+    fileDrop.addEventListener('dragover', e => { e.preventDefault(); fileDrop.classList.add('dragover'); });
+    fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
+    fileDrop.addEventListener('drop', e => {
+      e.preventDefault();
+      fileDrop.classList.remove('dragover');
+      if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', function() {
+      if (this.files && this.files.length > 0) setFile(this.files[0]);
+    });
   });
-  // Fallback click handler — ensures tapping anywhere on the zone opens the picker
-  fileDrop.addEventListener('click', e => {
-    if (e.target !== fileInput) { e.preventDefault(); fileInput.click(); }
-  });
-  fileInput.addEventListener('change', () => { if (fileInput.files.length) setFile(fileInput.files[0]); });
 
   function setFile(f) {
     if (f.size > 10 * 1024 * 1024) { showToast('File too large — max 10 MB.', 'error'); return; }
     const el = document.getElementById('fileChosen');
     el.textContent = '✓ ' + f.name;
     el.classList.add('visible');
-    fileDrop.classList.remove('invalid');
+    document.getElementById('fileDrop').classList.remove('invalid');
     document.getElementById('fileErr').classList.remove('visible');
   }
 
@@ -914,7 +914,7 @@
     const name  = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
     const svc   = getService();
-    const file  = fileInput.files[0];
+    const file  = document.getElementById('fileInput').files[0];
 
     const err = (id, inputId, show) => {
       document.getElementById(id).classList.toggle('visible', show);
@@ -933,7 +933,7 @@
 
     const name  = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
-    const file  = fileInput.files[0];
+    const file  = document.getElementById('fileInput').files[0];
     const svc   = getService();
     const { final, discount, priorityAddon, roundingAdj } = calcTotal(svc.price);
 
@@ -1007,7 +1007,7 @@
 
     const name     = document.getElementById('name').value.trim();
     const email    = document.getElementById('email').value.trim();
-    const file     = fileInput.files[0];
+    const file     = document.getElementById('fileInput').files[0];
     const svc      = getService();
     const priority = document.getElementById('priorityCheck').checked;
 
@@ -1063,4 +1063,12 @@
     closeTosModal();
   }
 
-  function showToast(msg, ty
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = (type === 'success' ? '✓ ' : '✕ ') + msg;
+    t.className = 'toast ' + type + ' show';
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+</script>
+</body>
+</html>
