@@ -648,7 +648,7 @@
       <div style="font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--info); margin-bottom: 0.6rem;">📞 Need Help? Contact Us</div>
       If something goes wrong or you need assistance, feel free to reach out:<br/>
       <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem;">
-        <span>✉️ <strong style="color:var(--text);">Email:</strong> <a href="mailto:gt.triculture@gmail.com" style="color:var(--info); text-decoration:none;">gt.triculture@gmail.com</a></span>
+        <span>✉️ <strong style="color:var(--text);">Email:</strong> <a href="/cdn-cgi/l/email-protection#c3a4b7edb7b1aaa0b6afb7b6b1a683a4aea2aaafeda0acae" style="color:var(--info); text-decoration:none;"><span class="__cf_email__" data-cfemail="5532217b21273c36203921202730153238343c397b363a38">[email&#160;protected]</span></a></span>
       </div>
     </div>
 
@@ -761,10 +761,12 @@
 
       <h3>Refund Policy</h3>
       <p><strong>All sales are final.</strong> Once payment is made and your document is submitted, it will be sent through our processing pipeline and no refunds will be issued.</p>
-      <p>If you sent the wrong amount via MMG before completing your order, you must pay the remaining balance separately and include the second transaction reference number in the reference field.</p>
+      <p>If you paid too little, your order will not be processed unless you pay the remaining balance in a separate transaction. <strong>You must include both transaction reference numbers</strong> in the reference field for your payment to be accepted. If you paid a short balance and did not pay the remainder, you will <strong>not</strong> receive a refund. If you paid too much, your order will still be processed but the excess amount will <strong>not</strong> be refunded.</p>
       <p>If you applied a promo code but had already paid the original (non-discounted) price, <strong>no refund will be issued</strong> — you must pay the full listed price.</p>
-      <p>If you paid too little, your order <strong>will not be processed</strong> and no refund will be given. If you paid too much, your order will still be processed but the excess amount <strong>will not be refunded</strong>.</p>
       <p>Refunds are only considered in cases of a technical error or a mistake made on our end. All approved refunds are processed through MMG.</p>
+
+      <h3>Transaction ID Validity</h3>
+      <p>Once you have paid through MMG, your transaction ID is valid on our end for <strong>2 weeks (14 days)</strong> from the date of payment. After that period, the transaction ID expires and cannot be recovered. If your ID expires before you submit your order, you will need to pay again. Please submit your order promptly after completing payment.</p>
 
       <h3>Fair Use &amp; Abuse</h3>
       <p>This service is for personal use only. <strong>You may not use our reports for resale or for the benefit of third parties.</strong> Any abuse of this policy — including commercial resale or providing reports to others for profit — will result in your future transactions being ignored without refund.</p>
@@ -785,7 +787,7 @@
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // ── CONFIG ──────────────────────────────────────────────────
   const WORKER_URL = "https://turnitingy.gt-triculture.workers.dev";
   // ────────────────────────────────────────────────────────────
@@ -1057,12 +1059,4 @@
     closeTosModal();
   }
 
-  function showToast(msg, type) {
-    const t = document.getElementById('toast');
-    t.textContent = (type === 'success' ? '✓ ' : '✕ ') + msg;
-    t.className = 'toast ' + type + ' show';
-    setTimeout(() => t.classList.remove('show'), 4000);
-  }
-</script>
-</body>
-</html>
+  function showToast(msg, ty
