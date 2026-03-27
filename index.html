@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Score Check Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
   :root {
     --bg: #0a0a0f;
@@ -168,7 +168,15 @@
   }
   .service-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
   .service-name { font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
-  .service-price { font-size: 0.72rem; color: var(--accent); margin-bottom: 0.3rem; }
+  /* Improved price font on service cards */
+  .service-price {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.02em;
+  }
   .service-tag { font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); background: rgba(255,255,255,0.05); border-radius: 2px; padding: 0.15rem 0.4rem; display: inline-block; margin-bottom: 0.6rem; }
   .service-tag-featured { color: var(--accent2); background: rgba(255,107,53,0.1); }
   .service-card-featured { border-color: rgba(245,200,66,0.35) !important; position: relative; }
@@ -243,7 +251,14 @@
   .summary-divider { height: 1px; background: rgba(245,200,66,0.15); margin: 0.75rem 0; }
   .summary-total { display: flex; justify-content: space-between; align-items: baseline; }
   .total-label { font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em; }
-  .total-amount { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--accent); }
+  /* Improved total amount font */
+  .total-amount {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.01em;
+  }
   .total-currency { font-size: 0.8rem; color: var(--muted); margin-left: 0.2rem; }
   .pay-box {
     background: var(--surface2);
@@ -254,9 +269,25 @@
     animation: fadeUp 0.4s ease 0.05s both;
   }
   .pay-box-title { font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--info); margin-bottom: 0.75rem; }
-  .pay-number { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: 0.05em; color: var(--text); margin-bottom: 0.4rem; }
+  /* Improved MMG number font — large, clear, spaced */
+  .pay-number {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
   .pay-hint { font-size: 0.73rem; color: var(--muted); line-height: 1.7; }
   .pay-hint strong { color: var(--accent); font-weight: 500; }
+  /* Improved payExact inline amount */
+  #payExact {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1em;
+    color: var(--accent);
+    letter-spacing: 0.03em;
+  }
   .mmg-wrapper {
     display: flex;
     align-items: stretch;
@@ -307,6 +338,167 @@
   .service-err.visible { display: block; }
   .field-error { color: var(--error); font-size: 0.68rem; margin-top: 0.35rem; display: none; }
   .field-error.visible { display: block; }
+
+  /* Terms of Service checkbox row */
+  .tos-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .tos-row:hover { border-color: rgba(245,200,66,0.35); }
+  .tos-row input[type="checkbox"] {
+    margin-top: 0.15rem;
+    accent-color: var(--accent);
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .tos-text {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.6;
+    user-select: none;
+  }
+  .tos-link {
+    color: var(--info);
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+    transition: color 0.15s;
+  }
+  .tos-link:hover { color: #93c5fd; }
+  .tos-err { color: var(--error); font-size: 0.68rem; margin-top: 0.35rem; margin-bottom: 0.5rem; display: none; }
+  .tos-err.visible { display: block; }
+
+  /* ToS Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .modal {
+    background: var(--surface);
+    border: 1px solid rgba(245,200,66,0.2);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 540px;
+    max-height: 82vh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .modal-overlay.open .modal {
+    transform: translateY(0) scale(1);
+  }
+  .modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .modal-header {
+    padding: 1.4rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+  }
+  .modal-close {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .modal-close:hover { color: var(--text); border-color: var(--muted); }
+  .modal-body {
+    padding: 1.25rem 1.5rem 1.5rem;
+    overflow-y: auto;
+    font-size: 0.78rem;
+    line-height: 1.85;
+    color: var(--muted);
+    flex: 1;
+  }
+  .modal-body h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-top: 1.1rem;
+    margin-bottom: 0.45rem;
+  }
+  .modal-body h3:first-child { margin-top: 0; }
+  .modal-body p { margin-bottom: 0.6rem; }
+  .modal-body strong { color: var(--text); font-weight: 500; }
+  .modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .modal-accept-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #0a0a0f;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .modal-accept-btn:hover { background: #ffd966; }
+
   .toast {
     position: fixed;
     bottom: 2rem;
@@ -334,7 +526,8 @@
   @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
   @media (max-width: 420px) {
     .service-grid { grid-template-columns: 1fr; }
-    .pay-number { font-size: 1.5rem; }
+    .pay-number { font-size: 1.8rem; }
+    .modal { max-height: 90vh; }
   }
 </style>
 </head>
@@ -478,6 +671,10 @@
         <span id="discountLabel">Promo discount</span>
         <span id="discountAmt">—</span>
       </div>
+      <div class="summary-row" id="roundingRow" style="display:none; color: var(--muted); font-size: 0.72rem;">
+        <span>Rounding adjustment</span>
+        <span id="roundingAmt">—</span>
+      </div>
       <div class="summary-row" id="priorityRow" style="display:none; color: var(--accent);">
         <span>⚡ Max Priority Add-on</span>
         <span>+$1,000 GYD</span>
@@ -517,10 +714,21 @@
         </div>
         <div class="field-error" id="mmgErr">Please enter your MMG reference number.</div>
         <div style="margin-top: 0.6rem; background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.25); border-radius: 4px; padding: 0.6rem 0.85rem; font-size: 0.71rem; color: var(--error); line-height: 1.6;">
-          ⚠️ <strong>Make sure this is correct</strong>, as your payment will not process if it's incorrect!
+          ⚠️ <strong>Make sure this is correct</strong>, as your payment will not be processed if the reference number is wrong.
         </div>
       </div>
     </div>
+
+    <!-- Terms of Service agreement -->
+    <label class="tos-row" onclick="void(0)">
+      <input type="checkbox" id="tosCheck" onclick="event.stopPropagation()"/>
+      <span class="tos-text">
+        I have read and agree to the
+        <button class="tos-link" onclick="openTosModal(event)">Terms of Service</button>.
+        By submitting, I acknowledge the payment, refund, and usage policies.
+      </span>
+    </label>
+    <div class="tos-err" id="tosErr">You must agree to the Terms of Service to proceed.</div>
 
     <div style="display:flex; gap:0.6rem;">
       <button class="btn" onclick="backToForm()" style="background:var(--surface2); color:var(--text); border:1px solid var(--border); flex:0 0 auto; width:auto; padding:0.9rem 1.25rem;">&#8592; Back</button>
@@ -539,6 +747,42 @@
   </div>
 </div>
 
+<!-- Terms of Service Modal -->
+<div class="modal-overlay" id="tosModal" onclick="closeTosModalOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📄 Terms of Service</div>
+      <button class="modal-close" onclick="closeTosModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <h3>Data Collection &amp; Privacy</h3>
+      <p>By using this service, you consent to us collecting your name, email address, and any information contained in the document you submit. This information is used solely for processing your order. <strong>We do not sell or share your data with any third parties.</strong> All information is stored securely on our servers.</p>
+
+      <h3>Refund Policy</h3>
+      <p><strong>All sales are final.</strong> Once payment is made and your document is submitted, it will be sent through our processing pipeline and no refunds will be issued.</p>
+      <p>If you sent the wrong amount via MMG before completing your order, you must pay the remaining balance separately and include the second transaction reference number in the reference field.</p>
+      <p>If you applied a promo code but had already paid the original (non-discounted) price, <strong>no refund will be issued</strong> — you must pay the full listed price.</p>
+      <p>If you paid too little, your order <strong>will not be processed</strong> and no refund will be given. If you paid too much, your order will still be processed but the excess amount <strong>will not be refunded</strong>.</p>
+      <p>Refunds are only considered in cases of a technical error or a mistake made on our end. All approved refunds are processed through MMG.</p>
+
+      <h3>Fair Use &amp; Abuse</h3>
+      <p>This service is for personal use only. <strong>You may not use our reports for resale or for the benefit of third parties.</strong> Any abuse of this policy — including commercial resale or providing reports to others for profit — will result in your future transactions being ignored without refund.</p>
+      <p>Submitting excessive drafts or spamming our system creates backlogs for all users, including yourself. Repeated abuse will result in your submissions being ignored entirely.</p>
+
+      <h3>Pricing</h3>
+      <p>Prices are subject to change at any time without prior notice, depending on demand and operational costs. Please do not contact us regarding price changes.</p>
+
+      <h3>MMG Terms</h3>
+      <p>By completing payment, you also agree to comply with all applicable <strong>MMG (Guyana Mobile Money) Terms of Service</strong>.</p>
+
+    </div>
+    <div class="modal-footer">
+      <button class="modal-accept-btn" onclick="acceptTos()">I Understand &amp; Accept ✓</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -546,7 +790,14 @@
   const WORKER_URL = "https://turnitingy.gt-triculture.workers.dev";
   // ────────────────────────────────────────────────────────────
 
-  let appliedPromo = null; // { code, discountPct, label } — set by server response
+  let appliedPromo = null; // { code, discountPct, label }
+
+  // ── ROUNDING: always round UP to nearest 20 ──────────────────
+  function roundUpTo20(amount) {
+    const remainder = amount % 20;
+    if (remainder === 0) return amount;
+    return amount + (20 - remainder);
+  }
 
   // File handling
   const fileDrop  = document.getElementById('fileDrop');
@@ -608,21 +859,29 @@
 
   function calcTotal(base) {
     const priorityAddon = document.getElementById('priorityCheck') && document.getElementById('priorityCheck').checked ? 1000 : 0;
-    const subtotal = base + priorityAddon;
+    const subtotalBeforeRound = base + priorityAddon;
+
+    let afterDiscount = subtotalBeforeRound;
+    let discount = 0;
     if (appliedPromo) {
-      const disc = Math.round(subtotal * appliedPromo.discountPct / 100);
-      return { final: subtotal - disc, discount: disc, priorityAddon };
+      discount = Math.round(subtotalBeforeRound * appliedPromo.discountPct / 100);
+      afterDiscount = subtotalBeforeRound - discount;
     }
-    return { final: subtotal, discount: 0, priorityAddon };
+
+    const finalRounded = roundUpTo20(afterDiscount);
+    const roundingAdj = finalRounded - afterDiscount;
+
+    return { final: finalRounded, discount, priorityAddon, roundingAdj };
   }
 
   function updatePriorityAddon() {
-    // recalc if already on pay section
     if (document.getElementById('paySection').style.display !== 'none') {
       const svc = getService();
       if (!svc) return;
-      const { final, discount, priorityAddon } = calcTotal(svc.price);
+      const { final, discount, priorityAddon, roundingAdj } = calcTotal(svc.price);
+
       document.getElementById('priorityRow').style.display = priorityAddon > 0 ? 'flex' : 'none';
+
       const discRow = document.getElementById('discountRow');
       if (discount > 0) {
         document.getElementById('discountAmt').textContent = '-$' + discount + ' GYD';
@@ -630,6 +889,15 @@
       } else {
         discRow.style.display = 'none';
       }
+
+      const roundRow = document.getElementById('roundingRow');
+      if (roundingAdj > 0) {
+        document.getElementById('roundingAmt').textContent = '+$' + roundingAdj + ' GYD';
+        roundRow.style.display = 'flex';
+      } else {
+        roundRow.style.display = 'none';
+      }
+
       document.getElementById('sumTotal').textContent = final;
       document.getElementById('payExact').textContent = final;
     }
@@ -661,7 +929,7 @@
     const email = document.getElementById('email').value.trim();
     const file  = fileInput.files[0];
     const svc   = getService();
-    const { final, discount, priorityAddon } = calcTotal(svc.price);
+    const { final, discount, priorityAddon, roundingAdj } = calcTotal(svc.price);
 
     document.getElementById('sumName').textContent         = name;
     document.getElementById('sumEmail').textContent        = email;
@@ -676,6 +944,14 @@
       discRow.style.display = 'flex';
     } else {
       discRow.style.display = 'none';
+    }
+
+    const roundRow = document.getElementById('roundingRow');
+    if (roundingAdj > 0) {
+      document.getElementById('roundingAmt').textContent = '+$' + roundingAdj + ' GYD';
+      roundRow.style.display = 'flex';
+    } else {
+      roundRow.style.display = 'none';
     }
 
     document.getElementById('priorityRow').style.display = priorityAddon > 0 ? 'flex' : 'none';
@@ -696,13 +972,28 @@
 
   async function handleSubmit() {
     const mmg = document.getElementById('mmg').value.trim();
+    let valid = true;
+
     if (!mmg) {
       document.getElementById('mmgErr').classList.add('visible');
       document.getElementById('mmg').classList.add('invalid');
+      valid = false;
+    } else {
+      document.getElementById('mmgErr').classList.remove('visible');
+      document.getElementById('mmg').classList.remove('invalid');
+    }
+
+    if (!document.getElementById('tosCheck').checked) {
+      document.getElementById('tosErr').classList.add('visible');
+      valid = false;
+    } else {
+      document.getElementById('tosErr').classList.remove('visible');
+    }
+
+    if (!valid) {
+      showToast('Please complete all required fields.', 'error');
       return;
     }
-    document.getElementById('mmgErr').classList.remove('visible');
-    document.getElementById('mmg').classList.remove('invalid');
 
     const btn = document.getElementById('submitBtn');
     btn.classList.add('loading');
@@ -742,6 +1033,28 @@
       btn.classList.remove('loading');
       btn.disabled = false;
     }
+  }
+
+  // ── ToS Modal ─────────────────────────────────────────────────
+  function openTosModal(e) {
+    if (e) e.preventDefault();
+    document.getElementById('tosModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeTosModal() {
+    document.getElementById('tosModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closeTosModalOnOverlay(e) {
+    if (e.target === document.getElementById('tosModal')) closeTosModal();
+  }
+
+  function acceptTos() {
+    document.getElementById('tosCheck').checked = true;
+    document.getElementById('tosErr').classList.remove('visible');
+    closeTosModal();
   }
 
   function showToast(msg, type) {
