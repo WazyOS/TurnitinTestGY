@@ -648,7 +648,7 @@
       <div style="font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--info); margin-bottom: 0.6rem;">📞 Need Help? Contact Us</div>
       If something goes wrong or you need assistance, feel free to reach out:<br/>
       <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem;">
-        <span>✉️ <strong style="color:var(--text);">Email:</strong> <a href="/cdn-cgi/l/email-protection#c3a4b7edb7b1aaa0b6afb7b6b1a683a4aea2aaafeda0acae" style="color:var(--info); text-decoration:none;"><span class="__cf_email__" data-cfemail="5532217b21273c36203921202730153238343c397b363a38">[email&#160;protected]</span></a></span>
+        <span>✉️ <strong style="color:var(--text);">Email:</strong> <a id="contactEmail" href="#" style="color:var(--info); text-decoration:none;"></a></span>
       </div>
     </div>
 
@@ -801,7 +801,7 @@
     return amount + (20 - remainder);
   }
 
-  // File handling — attach listeners once DOM is ready
+  // File handling + email build — attach once DOM is ready
   window.addEventListener('load', function() {
     const fileDrop  = document.getElementById('fileDrop');
     const fileInput = document.getElementById('fileInput');
@@ -816,6 +816,10 @@
     fileInput.addEventListener('change', function() {
       if (this.files && this.files.length > 0) setFile(this.files[0]);
     });
+
+    // Build contact email at runtime to bypass Cloudflare obfuscation
+    const el = document.getElementById('contactEmail');
+    if (el) { const u = 'gt.triculture'; const d = 'gmail.com'; el.href = 'mailto:' + u + '@' + d; el.textContent = u + '@' + d; }
   });
 
   function setFile(f) {
